@@ -1,4 +1,4 @@
-# WebVideoDownload
+# WebVideoDownload_暂时只支持m3u8
 ##首先推荐下载一款网页插件
 https://microsoftedge.microsoft.com/addons/detail/%E8%A7%86%E9%A2%91%E4%B8%8B%E8%BD%BD%E7%A5%9E%E5%99%A8/mpheaeopmnhokmilcdjopinhnadabilf
 ####在edge上的一款网页插件
