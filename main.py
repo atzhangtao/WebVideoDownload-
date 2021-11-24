@@ -93,9 +93,7 @@ a={'logdir':'E:\大鹏教育\转录记录.txt','url':[
 'https://hls.videocc.net/ef4825bc7e/d/ef4825bc7e20a9339a84798e9f9b85fd.m3u8',
 'https://hls.videocc.net/ef4825bc7e/8/ef4825bc7e03212dac992925b2b0bf08.m3u8'
 ],'outdir':['E:\大鹏教育\est\\','E:\大鹏教育\est2\\','E:\大鹏教育\est3\\'],'perNumber':[1,3],'proName':'test_'}
-with open('./url.yaml','w') as f:
-    f.write(yaml.dump(a,allow_unicode=True))
-    print(yaml.dump(a))
+
 with open('./url.yaml','r')as f:
     data=yaml.safe_load(f)
 
