@@ -8,6 +8,7 @@ perNumber:
 - 3
 proName: test_
 url:
+- https://mooc2vod.stu.126.net/nos/hls/2019/03/05/1214384223_51edca1da9bd42f4a7c0336bcfe682f0_sd.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de885cf83d2b6abb6149ddfd5df79b58a5e423239a141d3a2223ed1b55fcb6b4c043059f726dc7bb86b92adbc3d5b34b13204aadf17a9f9725aa2635991813bb939ab1751379953e9446561f60f0e4ab9c0
 - https://hls.videocc.net/ef4825bc7e/6/ef4825bc7e9c3debacc3e64b6cc34da6.m3u8
 - https://hls.videocc.net/ef4825bc7e/6/ef4825bc7ed727a9402c7e9885c378a6.m3u8
 - https://hls.videocc.net/ef4825bc7e/4/ef4825bc7e6b983761f0c45469623904.m3u8
