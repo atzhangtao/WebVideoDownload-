@@ -20,5 +20,9 @@ https://microsoftedge.microsoft.com/addons/detail/%E8%A7%86%E9%A2%91%E4%B8%8B%E8
 填写完之后：
 直接运行main.py  即可
 注意：要存放的目录下必须是空的 
-
+#m4s
+![img.png](images/img3.png)
+现在网址似乎都会分析其请求地址，所以好像你不从它们的网站请求链接，就会被墙，返回403
+解决办法是使用urllib.request模拟网站发出请求
+现在对b站进行测试
 
