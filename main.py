@@ -6,6 +6,9 @@ from ffmpy3 import FFmpeg
 import yaml
 import os
 
+from m4sDownload import m4sDownload
+
+
 class m3u8Down:
  def ffmpeg_path(self,inputs_path, outputs_path):
     '''
@@ -45,8 +48,8 @@ class m3u8Down:
     if not (os.path.exists(self.data['outdir'][0])):
         os.makedirs(self.data['outdir'][0])
         print("成功创建目录", self.data['outdir'][0])
-    if (len(self.data['perNumber'])):
-        sign = 1
+    if (len(self.data['outdir'])-1):
+        self.sign = 1
         if (len(self.data['perNumber']) != (len(self.data['outdir']) - 1)):
             print("分割格式错误，检查perNumber的数量")
             exit(1)
@@ -56,29 +59,26 @@ class m3u8Down:
   with open(self.data['logdir'],'a+') as fo:
    while (self.i < len(self.data['url'])):
     startTime = time.time()
-    if len(self.data['perNumber']) and (self.i <self. data['perNumber'][self.dirnumber]):  # 通过len（perNumber）判断是否要分割文件夹
+    if self.sign and(self.i <self. data['perNumber'][self.dirnumber]):  # 通过len(self.data['outdir'])-1判断是否要分割文件夹
       self.suffix = len(os.listdir(self.data['outdir'][self.dirnumber]))+1
       self.ffmpeg_path(self.data['url'][self.i], self.data['outdir'][self.dirnumber] + str(self.data['proName']) + str(self.suffix) + '.mp4')
-    elif (self.dirnumber != len(self.data['perNumber']) - 1):  # 文件装满后且不是最后一个文件架，切换下一个文件夹
+    elif self.sign and (self.dirnumber != len(self.data['outdir']) - 2):  # 文件装满后且不是 要创建最后一个文件架，切换下一个文件夹
       self.dirnumber =self. dirnumber + 1
       if not(os.path.exists(self.data['outdir'][self.dirnumber])):
         os.makedirs(self.data['outdir'][self.dirnumber])
         print("成功创建目录", self.data['outdir'][self.dirnumber])
       continue
-    else:  # 如果是最后一个文件则dirnumber+1
-      # 如果是非分割的文件则先进行dirnumber-1，再dirnumber+1
-      # 并且只运行一次设定初始值之后，就令sign为3，不再运行
+    else:
       if (self.sign == 1):
+          self.dirnumber=self.dirnumber+1
           if not (os.path.exists(self.data['outdir'][self.dirnumber])):
               os.makedirs(self.data['outdir'][self.dirnumber])
               print("成功创建目录", self.data['outdir'][self.dirnumber])
 
-          self.sign = 3
-      elif (self.sign == 0):
-          self.dirnumber = self.dirnumber - 1
-          self.sign = 3
-      self.suffix = len(os.listdir(self.data['outdir'][self.dirnumber])) + 1
-      self.ffmpeg_path(self.data['url'][self.i], self.data['outdir'][self.dirnumber + 1] + str(self.data['proName']) + str(self.suffix) + '.mp4')
+          self.sign = 0
+
+      self.suffix = len(os.listdir(self.data['outdir'][self.dirnumber]))
+      self.ffmpeg_path(self.data['url'][self.i], self.data['outdir'][self.dirnumber] + str(self.data['proName']) + str(self.suffix) + '.mp4')
 
     endtime = time.time()
     print(str(self.i + 1) + '完成录制:耗时' + str(endtime - startTime) + '   北京时间：' + str(
@@ -87,8 +87,14 @@ class m3u8Down:
       time.asctime(time.localtime(time.time()))) + "\n")
     self.i = self.i + 1
     fo.flush()
-m3u8=m3u8Down()
-m3u8.downLoad()
+with open('./url.yaml','r')as f:
+    data=yaml.safe_load(f)
+if (data['class']=='m4s'):
+        DownLoad=m4sDownload()
+if(data['class']=='m3u8'):
+        DownLoad=m3u8Down()
+DownLoad.downLoad()
+
 
 
 
