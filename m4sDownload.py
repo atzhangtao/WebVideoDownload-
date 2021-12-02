@@ -47,11 +47,23 @@ class m4sDownload():
       self.opener = urllib.request.build_opener()#实例化一个OpenerDirector
       self.opener.addheaders = [('user-agent',self.data['user-agent']),
                      ('referer',self.data['referer'])]#添加header,注意格式
+
+    def reporthook(sekf,a, b, c):
+        """
+        显示下载进度
+        :param a: 已经下载的数据块
+        :param b: 数据块的大小
+        :param c: 远程文件大小
+        :return: None
+        """
+        print("\rdownloading: %5.1f%%" % (a * b * 100.0 / c), end="")
      #将OpenerDirector装进opener
     def FFmpeg_path(self,dirnumber):
       urllib.request.install_opener(self.opener)
-      urllib.request.urlretrieve(self.data['url'][self.i],self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.m4s'))+1)+'.m4s')
-      urllib.request.urlretrieve(self.data['url'][self.i+1],self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.m4s'))+1)+'.m4s')
+      print("第"+str(self.i+1)+"个m4s：")
+      urllib.request.urlretrieve(self.data['url'][self.i],self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.m4s'))+1)+'.m4s',self.reporthook)
+      print("第" + str(self.i + 2) + "个m4s：")
+      urllib.request.urlretrieve(self.data['url'][self.i+1],self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.m4s'))+1)+'.m4s',self.reporthook)
       a = FFmpeg(
        inputs={self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.m4s')))+'.m4s': None,self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.m4s'))-1)+'.m4s':None},
        outputs={self.data['outdir'][dirnumber]+str(len(glob.glob(self.data['outdir'][dirnumber]+'*.mp4'))+1)+'.mp4': '-codec copy'}
