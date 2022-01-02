@@ -1,8 +1,13 @@
 import urllib.request
 
+import urllib.request
 from ffmpy3 import FFmpeg
-
-
+import os
+import glob
+import yaml
+import time
+import math
+#废弃
 def v1():
     #访问外网需要代理
  header={
@@ -16,8 +21,38 @@ def v1():
  print(reponse.getcode())
  with open('./0381.mp4','wb+')as of:
    of.write(reponse.read())
+class mp4Down():
+    def __init__(self):
 
-def reporthook(a, b, c):
+        with open('./url.yaml', 'r') as f:
+            self.data = yaml.safe_load(f)
+            self.i = 0
+            self.dirnumber = 0
+
+            self.sign = 0
+            if not (len(self.data['logdir'])):
+                print(" 日志文件目录不可以为空，请填logdir的路径")
+                exit(3)
+
+            if not (len(self.data['outdir'])):
+                print(" 输出文件目录不可以为空，请填outdir的路径")
+                exit(2)
+            if not (len(self.data['url'])):
+                print(" url目录不可以为空，请填url的路径")
+                exit(4)
+            if not (os.path.exists(self.data['outdir'][0])):
+                os.makedirs(self.data['outdir'][0])
+                print("成功创建目录", self.data['outdir'][0])
+            if (len(self.data['outdir']) - 1):
+                self.sign = 1
+                if (len(self.data['perNumber']) != (len(self.data['outdir']) - 1)):
+                    print("分割格式错误，检查perNumber的数量")
+                    exit(1)
+        self.opener = urllib.request.build_opener()  # 实例化一个OpenerDirector
+        self.opener.addheaders = [('user-agent', self.data['user-agent']),
+                                  ('referer', self.data['referer'])]  # 添加header,注意格式
+        self.opener.add_handler(urllib.request.ProxyHandler({"https":"127.0.0.1:8080"}))#加入代理127.0.0.1:8080
+    def reporthook(self,a, b, c):
         """
         显示下载进度
         :param a: 已经下载的数据块
@@ -26,19 +61,69 @@ def reporthook(a, b, c):
         :return: None
         """
         print("\rdownloading: %5.1f%%" % (a * b * 100.0 / c), end="")
-url='https://r3---sn-un57en7s.googlevideo.com/videoplayback?expire=1638444418&ei=IlmoYfTyFpTa4QKInLCwCg&ip=114.46.80.124&id=o-AHPKHQY1JKlIE6ijRhXLixiqD1LfDROfVSqtJBzpXqf1&itag=244&aitags=133%2C134%2C135%2C160%2C242%2C243%2C244%2C278&source=youtube&requiressl=yes&pcm2=no&vprv=1&mime=video%2Fwebm&ns=tAKYYoW7y7a7WJpLXJOrVIcG&gir=yes&clen=174871362&dur=3760.541&lmt=1513839627803082&keepalive=yes&fexp=24001373,24007246&c=WEB&n=au56zQ5QXmf8xA&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cpcm2%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRQIgUH2zifFZLwOUmb_EdxW9cF5qYGwBanHjdZTdi5gib2oCIQDBUCCpKWUIjy8QO7yQ_Yrll9M7U_9G76kdq_HAsRMl2w%3D%3D&alr=yes&cpn=9exB6TqhYsRjfaLH&cver=2.20211129.09.00&redirect_counter=1&cm2rm=sn-ipoxu-umbr7s&cms_redirect=yes&ipbypass=yes&mh=yP&mm=29&mn=sn-un57en7s&ms=rdu&mt=1638421965&mv=u&mvi=3&pl=23&lsparams=ipbypass,mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIgHmBg_-GXbGhWwKBtNQjnd9izMT-WemAbjPnyWI9S__ACIQCqaOFE9J6cBG6-bb5auRM-pkiVKmyPGpuCWiHVEzMS9Q%3D%3D'
-url1='https://r3---sn-ipoxu-umbr.googlevideo.com/videoplayback?expire=1638444418&ei=IlmoYfTyFpTa4QKInLCwCg&ip=114.46.80.124&id=o-AHPKHQY1JKlIE6ijRhXLixiqD1LfDROfVSqtJBzpXqf1&itag=251&source=youtube&requiressl=yes&mh=yP&mm=31%2C29&mn=sn-ipoxu-umbr%2Csn-un57sn7y&ms=au%2Crdu&mv=m&mvi=3&pl=23&pcm2=no&initcwndbps=626250&vprv=1&mime=audio%2Fwebm&ns=tAKYYoW7y7a7WJpLXJOrVIcG&gir=yes&clen=60555025&dur=3760.601&lmt=1513839135278398&mt=1638422457&fvip=3&keepalive=yes&fexp=24001373%2C24007246&c=WEB&n=au56zQ5QXmf8xA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cpcm2%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRQIgRU5cLh5pc62k_pM4IgmAsoL8jQrCvJzeiUT0dt6VNxwCIQDim7HiEw5udBe9k8t4f6Gadd1SyUArp2DMg6fnqzwOdA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgNUa98ndB-TMxIV35qIWfdqMsPtOGooOfob_JSNVN2zgCIGwTvh_orsV2SRLa6XvllSFrzqac04o3L_GI20b2Mwi1&alr=yes&cpn=9exB6TqhYsRjfaLH&cver=2.20211129.09.00'
-opener = urllib.request.build_opener()  # 实例化一个OpenerDirector
-opener.addheaders = [('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34'),
-                              ('referer', 'https://www.youtube.com/')]  # 添加header,注意格式
-opener.add_handler(urllib.request.ProxyHandler({"https":"127.0.0.1:8080"}))#加入代理127.0.0.1:8080
-urllib.request.install_opener(opener)
-urllib.request.urlretrieve(url,'./0318',reporthook)
-urllib.request.urlretrieve(url1,'./0319',reporthook)
 
-a = FFmpeg(
-       inputs={'./0318': None,'./0319':None},
-       outputs={'./3333'+'.mp4': '-codec copy'}
-      )
-print(a.cmd)
-a.run()
+    def FFmpeg_path(self, dirnumber):
+        urllib.request.install_opener(self.opener)
+        print("第" + str(self.i + 1) + "个m4s：")
+        urllib.request.urlretrieve(self.data['url'][self.i], self.data['outdir'][dirnumber] + str(
+            len(glob.glob(self.data['outdir'][dirnumber] + '*')) + 1) , self.reporthook)
+        print("第" + str(self.i + 2) + "个m4s：")
+        urllib.request.urlretrieve(self.data['url'][self.i + 1], self.data['outdir'][dirnumber] + str(
+            len(glob.glob(self.data['outdir'][dirnumber] + '*')) + 1), self.reporthook)
+        a = FFmpeg(
+            inputs={self.data['outdir'][dirnumber] + str(
+                len(glob.glob(self.data['outdir'][dirnumber] + '*'))): None,
+                    self.data['outdir'][dirnumber] + str(
+                        len(glob.glob(self.data['outdir'][dirnumber] + '*')) - 1): None},
+            outputs={self.data['outdir'][dirnumber] + str(
+                len(glob.glob(self.data['outdir'][dirnumber] + '*')) + 1) + '.mp4': '-codec copy'}
+        )
+        print(a.cmd)
+        a.run()
+
+    def downLoad(self):
+        with open(self.data['logdir'], 'a+') as fo:
+            while (self.i < len(self.data['url'])):
+                startTime = time.time()
+                if self.sign and (
+                        self.i < self.data['perNumber'][self.dirnumber] * 2):  # 通过len（perNumber）判断是否要分割文件夹
+                    self.FFmpeg_path(self.dirnumber)
+                elif self.sign and (self.dirnumber != len(self.data['outdir']) - 2):  # 文件装满后且不是最后一个文件架，切换下一个文件夹
+                    self.dirnumber = self.dirnumber + 1
+                    if not (os.path.exists(self.data['outdir'][self.dirnumber])):
+                        os.makedirs(self.data['outdir'][self.dirnumber])
+                        print("成功创建目录", self.data['outdir'][self.dirnumber])
+                    continue
+                else:
+                    if (self.sign == 1):
+                        self.dirnumber = self.dirnumber + 1
+                        if not (os.path.exists(self.data['outdir'][self.dirnumber])):
+                            os.makedirs(self.data['outdir'][self.dirnumber])
+                            print("成功创建目录", self.data['outdir'][self.dirnumber])
+
+                        self.sign = 0
+                    self.FFmpeg_path(self.dirnumber)
+
+                endtime = time.time()
+                print(str(math.ceil(self.i // 2)) + '完成录制:耗时' + str(endtime - startTime) + '   北京时间：' + str(
+                    time.asctime(time.localtime(time.time()))) + "\n")
+                fo.write(str(math.ceil(self.i // 2)) + '完成录制:耗时' + str(endtime - startTime) + '   北京时间：' + str(
+                    time.asctime(time.localtime(time.time()))) + "\n")
+                self.i = self.i + 2
+                fo.flush()
+# opener = urllib.request.build_opener()  # 实例化一个OpenerDirector
+# opener.addheaders = [('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34'),
+#                               ('referer', 'https://www.youtube.com/')]  # 添加header,注意格式
+#opener.add_handler(urllib.request.ProxyHandler({"https":"127.0.0.1:8080"}))#加入代理127.0.0.1:8080
+#urllib.request.install_opener(opener)
+#urllib.request.urlretrieve(url,'./0318',reporthook)
+#urllib.request.urlretrieve(url1,'./0319',reporthook)
+
+# a = FFmpeg(
+#        inputs={'./0318': None,'./0319':None},
+#        outputs={'./3333'+'.mp4': '-codec copy'}
+#       )
+# print(a.cmd)
+# a.run()
+DownLoad=mp4Down()
+DownLoad.downLoad()

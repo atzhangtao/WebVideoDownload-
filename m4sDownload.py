@@ -48,7 +48,7 @@ class m4sDownload():
       self.opener.addheaders = [('user-agent',self.data['user-agent']),
                      ('referer',self.data['referer'])]#添加header,注意格式
 
-    def reporthook(sekf,a, b, c):
+    def reporthook(self,a, b, c):
         """
         显示下载进度
         :param a: 已经下载的数据块

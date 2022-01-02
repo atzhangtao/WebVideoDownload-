@@ -5,7 +5,7 @@ import time
 from ffmpy3 import FFmpeg
 import yaml
 import os
-
+from mp4Download import mp4Down
 from m4sDownload import m4sDownload
 
 
@@ -93,6 +93,8 @@ if (data['class']=='m4s'):
         DownLoad=m4sDownload()
 if(data['class']=='m3u8'):
         DownLoad=m3u8Down()
+else:
+        DownLoad=mp4Down()
 DownLoad.downLoad()
 
 
